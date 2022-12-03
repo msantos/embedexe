@@ -9,6 +9,7 @@ import (
 	"strconv"
 
 	"codeberg.org/msantos/embedexe"
+	"golang.org/x/sys/unix"
 )
 
 const (
@@ -92,7 +93,11 @@ func (cmd *Cmd) Start() error {
 func (cmd *Cmd) fdopen() error {
 	// 0: /proc/self/exe
 	// 1: os.Args[0]
-	fd, err := embedexe.Open(cmd.Exe, cmd.Args[1])
+	if len(cmd.Args) < 2 {
+		return unix.EINVAL
+	}
+
+	fd, err := embedexe.Open(cmd.Exe, os.Args[1])
 	if err != nil {
 		return err
 	}
