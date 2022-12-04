@@ -90,6 +90,20 @@ func (cmd *Cmd) Start() error {
 	return cmd.Cmd.Start()
 }
 
+func (cmd *Cmd) CombinedOutput() ([]byte, error) {
+	if err := cmd.fdopen(); err != nil {
+		return nil, err
+	}
+	return cmd.Cmd.CombinedOutput()
+}
+
+func (cmd *Cmd) Output() ([]byte, error) {
+	if err := cmd.fdopen(); err != nil {
+		return nil, err
+	}
+	return cmd.Cmd.Output()
+}
+
 func (cmd *Cmd) fdopen() error {
 	// 0: /proc/self/exe
 	// 1: os.Args[0]
