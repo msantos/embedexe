@@ -18,9 +18,10 @@ const (
 	EnvVerbose = "EMBEDEXE_VERBOSE" // enable debug error messages
 )
 
+// Cmd is a wrapper around the os/exec Cmd struct.
 type Cmd struct {
 	*exec.Cmd
-	Exe []byte
+	Exe []byte // Exe holds the executable as a byte array.
 }
 
 func errexit(status int, err error) {
@@ -60,6 +61,9 @@ func init() {
 	errexit(126, err)
 }
 
+// Command returns the Cmd struct to execute the program held in exe
+// with the given arguments. At least one argument must be provided
+// (the program name).
 func Command(exe []byte, argv []string) *Cmd {
 	cmd := exec.Command("/proc/self/exe", argv...)
 	return &Cmd{
@@ -68,6 +72,7 @@ func Command(exe []byte, argv []string) *Cmd {
 	}
 }
 
+// CommandContext returns a Cmd struct using the provided context.
 func CommandContext(ctx context.Context, exe []byte, argv []string) *Cmd {
 	cmd := exec.CommandContext(ctx, "/proc/self/exe", argv...)
 	return &Cmd{
@@ -76,6 +81,7 @@ func CommandContext(ctx context.Context, exe []byte, argv []string) *Cmd {
 	}
 }
 
+// Run starts the specified command and waits for it to complete.
 func (cmd *Cmd) Run() error {
 	if err := cmd.fdopen(); err != nil {
 		return err
@@ -83,6 +89,7 @@ func (cmd *Cmd) Run() error {
 	return cmd.Cmd.Run()
 }
 
+// Start starts the specified command but does not wait for it to complete.
 func (cmd *Cmd) Start() error {
 	if err := cmd.fdopen(); err != nil {
 		return err
@@ -90,6 +97,8 @@ func (cmd *Cmd) Start() error {
 	return cmd.Cmd.Start()
 }
 
+// CombinedOutput runs the command and returns its combined standard
+// output and standard error.
 func (cmd *Cmd) CombinedOutput() ([]byte, error) {
 	if err := cmd.fdopen(); err != nil {
 		return nil, err
@@ -97,6 +106,7 @@ func (cmd *Cmd) CombinedOutput() ([]byte, error) {
 	return cmd.Cmd.CombinedOutput()
 }
 
+// Output runs the command and returns its standard output.
 func (cmd *Cmd) Output() ([]byte, error) {
 	if err := cmd.fdopen(); err != nil {
 		return nil, err
