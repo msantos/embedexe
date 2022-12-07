@@ -1,4 +1,4 @@
-// Package exec runs a command stored in memory.
+// Package exec runs a command stored as bytes in memory.
 package exec
 
 import (

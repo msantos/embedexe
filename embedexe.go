@@ -1,45 +1,11 @@
-// Package embedexe embeds an executable or a directory of executables
-// in a Go binary and runs them from memory.
+// Package embedexe executes a program stored in a byte array such as
+// an executable or a directory of executables embedded in a Go binary.
 package embedexe
 
 import (
 	"codeberg.org/msantos/execve"
 	"golang.org/x/sys/unix"
 )
-
-// Exec runs the executable referenced by the file descriptor, replacing
-// the current running process image.
-func Exec(fd uintptr, argv, env []string) error {
-	return execve.Fexecve(fd, argv, env)
-}
-
-// CloseExec checks if the O_CLOEXEC flag is set on the file descriptor.
-func CloseExec(fd uintptr) bool {
-	flag, err := unix.FcntlInt(fd, unix.F_GETFD, 0)
-	if err != nil {
-		return false
-	}
-
-	return flag&unix.MFD_CLOEXEC != 0
-}
-
-// SetCloseExec enables or disables the O_CLOEXEC flag on the file
-// descriptor.
-func SetCloseExec(fd uintptr, b bool) error {
-	flag, err := unix.FcntlInt(fd, unix.F_GETFD, 0)
-	if err != nil {
-		return err
-	}
-
-	if b {
-		flag |= unix.MFD_CLOEXEC
-	} else {
-		flag &= ^unix.MFD_CLOEXEC
-	}
-
-	_, err = unix.FcntlInt(fd, unix.F_SETFD, flag)
-	return err
-}
 
 func write(fd int, p []byte) error {
 	for i := 0; i < len(p); {
@@ -74,4 +40,38 @@ func Open(exe []byte, arg0 string) (uintptr, error) {
 	}
 
 	return uintptr(fd), nil
+}
+
+// Exec runs the executable referenced by the file descriptor, replacing
+// the current running process image.
+func Exec(fd uintptr, argv, env []string) error {
+	return execve.Fexecve(fd, argv, env)
+}
+
+// CloseExec checks if the O_CLOEXEC flag is set on the file descriptor.
+func CloseExec(fd uintptr) bool {
+	flag, err := unix.FcntlInt(fd, unix.F_GETFD, 0)
+	if err != nil {
+		return false
+	}
+
+	return flag&unix.MFD_CLOEXEC != 0
+}
+
+// SetCloseExec enables or disables the O_CLOEXEC flag on the file
+// descriptor.
+func SetCloseExec(fd uintptr, b bool) error {
+	flag, err := unix.FcntlInt(fd, unix.F_GETFD, 0)
+	if err != nil {
+		return err
+	}
+
+	if b {
+		flag |= unix.MFD_CLOEXEC
+	} else {
+		flag &= ^unix.MFD_CLOEXEC
+	}
+
+	_, err = unix.FcntlInt(fd, unix.F_SETFD, flag)
+	return err
 }

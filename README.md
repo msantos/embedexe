@@ -2,7 +2,8 @@
 
 [![Go Reference](https://pkg.go.dev/badge/codeberg.org/msantos/execve.svg)](https://pkg.go.dev/codeberg.org/msantos/embedexe)
 
-Run an executable embedded in a Go binary.
+Run a program stored in a byte array such as an executable or a directory
+of executables embedded in a Go binary.
 
 # LIMITATIONS
 
@@ -27,9 +28,9 @@ Run an executable embedded in a Go binary.
 ```go
 // Echotest forks and runs an embedded echo(1).
 //
-//    cp /bin/echo .
-//    go build
-//    ./echotest 3 hello world
+//	cp /bin/echo .
+//	go build
+//	./echotest 3 hello world
 package main
 
 import (
