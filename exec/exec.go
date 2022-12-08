@@ -121,7 +121,7 @@ func (cmd *Cmd) fdopen() error {
 		return unix.EINVAL
 	}
 
-	fd, err := embedexe.Open(cmd.Exe, os.Args[1])
+	fd, err := embedexe.Open(cmd.Exe, cmd.Args[1])
 	if err != nil {
 		return err
 	}
