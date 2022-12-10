@@ -9,7 +9,6 @@ import (
 	"strconv"
 
 	"codeberg.org/msantos/embedexe"
-	"golang.org/x/sys/unix"
 )
 
 const (
@@ -21,7 +20,8 @@ const (
 // Cmd is a wrapper around the os/exec Cmd struct.
 type Cmd struct {
 	*exec.Cmd
-	Exe []byte // Exe holds the executable as a byte array.
+	Exe  []byte // Exe holds the executable as a byte array.
+	Name string // The command name (proctitle) stored in /proc/self/comm.
 }
 
 func errexit(status int, err error) {
@@ -56,14 +56,13 @@ func init() {
 		}
 	}
 
-	err = embedexe.Exec(uintptr(fd), os.Args[1:], os.Environ())
+	err = embedexe.Exec(uintptr(fd), os.Args, os.Environ())
 
 	errexit(126, err)
 }
 
 // Command returns the Cmd struct to execute the program held in exe
-// with the given arguments. At least one argument must be provided
-// (the program name).
+// with the given arguments.
 func Command(exe []byte, argv []string) *Cmd {
 	cmd := exec.Command("/proc/self/exe", argv...)
 	return &Cmd{
@@ -115,13 +114,12 @@ func (cmd *Cmd) Output() ([]byte, error) {
 }
 
 func (cmd *Cmd) fdopen() error {
-	// 0: /proc/self/exe
-	// 1: os.Args[0]
-	if len(cmd.Args) < 2 {
-		return unix.EINVAL
+	name := cmd.Name
+	if name == "" {
+		name = os.Args[0]
 	}
 
-	fd, err := embedexe.Open(cmd.Exe, cmd.Args[1])
+	fd, err := embedexe.Open(cmd.Exe, name)
 	if err != nil {
 		return err
 	}
@@ -131,6 +129,7 @@ func (cmd *Cmd) fdopen() error {
 		return err
 	}
 
+	cmd.Args[0] = name
 	cmd.Env = append(cmd.Env, environ...)
 
 	return nil

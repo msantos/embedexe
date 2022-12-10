@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"codeberg.org/msantos/embedexe/exec"
-	"golang.org/x/sys/unix"
 )
 
 func TestCommand(t *testing.T) {
@@ -17,7 +16,7 @@ func TestCommand(t *testing.T) {
 	}
 
 	stdout := bytes.Buffer{}
-	cmd := exec.Command(exe, []string{"procname", "test"})
+	cmd := exec.Command(exe, []string{"test"})
 	cmd.Env = append(os.Environ(), "EMBEDEXE_VERBOSE=1")
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stdout
@@ -42,7 +41,7 @@ func TestCommandNullArgv(t *testing.T) {
 
 	cmd := exec.Command(exe, []string{})
 
-	if err := cmd.Run(); err != unix.EINVAL {
+	if err := cmd.Run(); err != nil {
 		t.Errorf("%v", err)
 		return
 	}

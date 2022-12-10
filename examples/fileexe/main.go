@@ -17,7 +17,7 @@ import (
 var exe []byte
 
 func main() {
-	cmd := exec.Command(exe, os.Args)
+	cmd := exec.Command(exe, os.Args[1:])
 
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout

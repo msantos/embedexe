@@ -21,7 +21,7 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	cmd := exec.Command(b, os.Args[1:])
+	cmd := exec.Command(b, os.Args[2:])
 
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout

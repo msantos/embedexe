@@ -8,7 +8,7 @@ of executables embedded in a Go binary.
 # LIMITATIONS
 
 * the executable must either be statically linked or the linked libraries
-  available on the filesytem
+  available on the filesystem
 
 * only works on Linux (but not on ChromeOS/crostini where presumably
   kernel hardening measures disable executing memfds)
@@ -45,7 +45,7 @@ import (
 var echo []byte
 
 func main() {
-	cmd := exec.Command(echo, os.Args)
+	cmd := exec.Command(echo, os.Args[1:])
 
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout

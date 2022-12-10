@@ -13,7 +13,7 @@ func ExampleCommand() {
 		log.Fatalln(err)
 	}
 
-	cmd := exec.Command(exe, []string{"procname", "test"})
+	cmd := exec.Command(exe, []string{"test"})
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
