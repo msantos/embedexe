@@ -20,13 +20,18 @@ const (
 // Cmd is a wrapper around the os/exec Cmd struct.
 type Cmd struct {
 	*exec.Cmd
-	Exe  []byte // Exe holds the executable as a byte array.
-	Name string // The command name (proctitle) stored in /proc/self/comm.
+
+	// Exe holds the executable as a byte array.
+	Exe []byte
+
+	// The command name (proctitle) stored in /proc/self/comm.
+	// Defaults to the command name of the current running process.
+	Name string
 }
 
 func errexit(status int, err error) {
 	if os.Getenv(EnvVerbose) != "" {
-		fmt.Fprintf(os.Stderr, "%s: %v\n", os.Args[1], err)
+		fmt.Fprintf(os.Stderr, "%s: %v\n", os.Args[0], err)
 	}
 	os.Exit(status)
 }
@@ -114,12 +119,13 @@ func (cmd *Cmd) Output() ([]byte, error) {
 }
 
 func (cmd *Cmd) fdopen() error {
-	name := cmd.Name
-	if name == "" {
-		name = os.Args[0]
+	if cmd.Name == "" {
+		cmd.Args[0] = os.Args[0]
+	} else {
+		cmd.Args[0] = cmd.Name
 	}
 
-	fd, err := embedexe.Open(cmd.Exe, name)
+	fd, err := embedexe.Open(cmd.Exe, cmd.Args[0])
 	if err != nil {
 		return err
 	}
@@ -129,7 +135,6 @@ func (cmd *Cmd) fdopen() error {
 		return err
 	}
 
-	cmd.Args[0] = name
 	cmd.Env = append(cmd.Env, environ...)
 
 	return nil
