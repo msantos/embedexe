@@ -2,26 +2,37 @@ package main
 
 import (
 	"embed"
+	"flag"
 	"log"
 	"os"
 
 	"codeberg.org/msantos/embedexe/exec"
 )
 
-//go:embed exe/*
-var exe embed.FS
+//go:embed bin/*
+var bin embed.FS
 
 func main() {
-	if len(os.Args) == 1 {
-		log.Fatalln("usage:", os.Args[0], "<command>")
+	verbose := flag.Bool("verbose", false, "Enable debug messages")
+	flag.Parse()
+
+	if *verbose {
+		if err := os.Setenv(exec.EnvVerbose, "1"); err != nil {
+			log.Fatalln(err)
+		}
 	}
 
-	b, err := exe.ReadFile(os.Args[1])
+	if flag.NArg() == 0 {
+		flag.Usage()
+		os.Exit(2)
+	}
+
+	b, err := bin.ReadFile(flag.Arg(0))
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	cmd := exec.Command(b, os.Args[2:])
+	cmd := exec.Command(b, flag.Args()[1:]...)
 
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout

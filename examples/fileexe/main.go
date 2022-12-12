@@ -1,8 +1,8 @@
 // Fileexe forks and runs an embedded executable.
 //
-//	cp /bin/echo .
+//	cp /bin/echo bin
 //	go build
-//	./filexe 3 hello world
+//	./filexe hello world
 package main
 
 import (
@@ -13,16 +13,15 @@ import (
 	"codeberg.org/msantos/embedexe/exec"
 )
 
-//go:embed exe
-var exe []byte
+//go:embed bin
+var bin []byte
 
 func main() {
-	cmd := exec.Command(exe, os.Args[1:])
+	cmd := exec.Command(bin, os.Args[1:]...)
 
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	cmd.Env = os.Environ()
 
 	if err := cmd.Run(); err != nil {
 		log.Fatalln("run:", cmd, err)

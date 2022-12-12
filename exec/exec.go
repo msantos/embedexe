@@ -68,8 +68,8 @@ func init() {
 
 // Command returns the Cmd struct to execute the program held in exe
 // with the given arguments.
-func Command(exe []byte, argv []string) *Cmd {
-	cmd := exec.Command("/proc/self/exe", argv...)
+func Command(exe []byte, arg ...string) *Cmd {
+	cmd := exec.Command("/proc/self/exe", arg...)
 	return &Cmd{
 		Cmd: cmd,
 		Exe: exe,
@@ -77,8 +77,8 @@ func Command(exe []byte, argv []string) *Cmd {
 }
 
 // CommandContext returns a Cmd struct using the provided context.
-func CommandContext(ctx context.Context, exe []byte, argv []string) *Cmd {
-	cmd := exec.CommandContext(ctx, "/proc/self/exe", argv...)
+func CommandContext(ctx context.Context, exe []byte, arg ...string) *Cmd {
+	cmd := exec.CommandContext(ctx, "/proc/self/exe", arg...)
 	return &Cmd{
 		Cmd: cmd,
 		Exe: exe,

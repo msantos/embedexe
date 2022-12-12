@@ -30,7 +30,7 @@ of executables embedded in a Go binary.
 //
 //	cp /bin/echo .
 //	go build
-//	./echotest 3 hello world
+//	./echotest hello world
 package main
 
 import (
@@ -45,12 +45,10 @@ import (
 var echo []byte
 
 func main() {
-	cmd := exec.Command(echo, os.Args[1:])
+	cmd := exec.Command(echo, os.Args[1:]...)
 
-	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	cmd.Env = os.Environ()
 
 	if err := cmd.Run(); err != nil {
 		log.Fatalln("run:", cmd, err)
