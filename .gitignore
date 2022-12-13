@@ -21,6 +21,6 @@
 go.work
 
 examples/fileexe/fileexe
-examples/fileexe/exe
+examples/fileexe/bin
 examples/fsexe/fsexe
-examples/fsexe/exe
+examples/fsexe/bin
