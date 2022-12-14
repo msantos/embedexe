@@ -16,7 +16,7 @@ func TestCommand(t *testing.T) {
 	}
 
 	stdout := bytes.Buffer{}
-	cmd := exec.Command(exe, []string{"test"})
+	cmd := exec.Command(exe, "test")
 	cmd.Env = append(os.Environ(), "EMBEDEXE_VERBOSE=1")
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stdout
@@ -39,7 +39,7 @@ func TestCommandNullArgv(t *testing.T) {
 		return
 	}
 
-	cmd := exec.Command(exe, []string{})
+	cmd := exec.Command(exe)
 
 	if err := cmd.Run(); err != nil {
 		t.Errorf("%v", err)
