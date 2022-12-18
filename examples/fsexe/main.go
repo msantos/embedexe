@@ -1,3 +1,14 @@
+// Fsexe forks and runs an executable from an embedded directory of
+// executables.
+//
+// To setup the executable directory:
+//
+//	mkdir bin
+//	cp /bin/echo bin
+//	cp /bin/sh bin
+//	cp /bin/ls bin
+//	go build
+//	./fsexe bin/ls -al
 package main
 
 import (

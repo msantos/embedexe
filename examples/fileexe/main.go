@@ -1,5 +1,7 @@
 // Fileexe forks and runs an embedded executable.
 //
+// Copy an executable into the build directory:
+//
 //	cp /bin/echo bin
 //	go build
 //	./filexe hello world
