@@ -42,6 +42,10 @@ func Open(exe []byte, arg0 string) (uintptr, error) {
 	return uintptr(fd), nil
 }
 
+func Close(fd uintptr) error {
+	return unix.Close(int(fd))
+}
+
 // Exec runs the executable referenced by the file descriptor, replacing
 // the current running process image.
 func Exec(fd uintptr, argv, env []string) error {

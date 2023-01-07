@@ -87,38 +87,46 @@ func CommandContext(ctx context.Context, exe []byte, arg ...string) *Cmd {
 
 // Run starts the specified command and waits for it to complete.
 func (cmd *Cmd) Run() error {
-	if err := cmd.fdopen(); err != nil {
+	fd, err := cmd.fdopen()
+	if err != nil {
 		return err
 	}
+	defer embedexe.Close(fd)
 	return cmd.Cmd.Run()
 }
 
 // Start starts the specified command but does not wait for it to complete.
 func (cmd *Cmd) Start() error {
-	if err := cmd.fdopen(); err != nil {
+	fd, err := cmd.fdopen()
+	if err != nil {
 		return err
 	}
+	defer embedexe.Close(fd)
 	return cmd.Cmd.Start()
 }
 
 // CombinedOutput runs the command and returns its combined standard
 // output and standard error.
 func (cmd *Cmd) CombinedOutput() ([]byte, error) {
-	if err := cmd.fdopen(); err != nil {
+	fd, err := cmd.fdopen()
+	if err != nil {
 		return nil, err
 	}
+	defer embedexe.Close(fd)
 	return cmd.Cmd.CombinedOutput()
 }
 
 // Output runs the command and returns its standard output.
 func (cmd *Cmd) Output() ([]byte, error) {
-	if err := cmd.fdopen(); err != nil {
+	fd, err := cmd.fdopen()
+	if err != nil {
 		return nil, err
 	}
+	defer embedexe.Close(fd)
 	return cmd.Cmd.Output()
 }
 
-func (cmd *Cmd) fdopen() error {
+func (cmd *Cmd) fdopen() (uintptr, error) {
 	if cmd.Name == "" {
 		cmd.Args[0] = os.Args[0]
 	} else {
@@ -127,17 +135,18 @@ func (cmd *Cmd) fdopen() error {
 
 	fd, err := embedexe.Open(cmd.Exe, cmd.Args[0])
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	environ, err := fdset(fd)
 	if err != nil {
-		return err
+		_ = embedexe.Close(fd)
+		return 0, err
 	}
 
 	cmd.Env = append(cmd.Env, environ...)
 
-	return nil
+	return fd, nil
 }
 
 func fdset(fd uintptr) ([]string, error) {
