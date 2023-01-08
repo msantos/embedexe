@@ -59,9 +59,31 @@ func ExampleOpen() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+	defer embedexe.Close(fd)
 
 	if err := embedexe.Exec(fd, []string{"example", "test"}, os.Environ()); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+}
+
+func ExamplePath() {
+	b, err := os.ReadFile("/bin/echo")
+
+	fd, err := embedexe.Open(b, "echo")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	cmd := exec.Command(embedexe.Path(fd), "-n", "test", "abc")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	if err := cmd.Run(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	// Output: test abc
 }

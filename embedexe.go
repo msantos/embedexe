@@ -3,7 +3,11 @@
 package embedexe
 
 import (
+	"fmt"
+	"os"
+
 	"codeberg.org/msantos/execve"
+
 	"golang.org/x/sys/unix"
 )
 
@@ -42,8 +46,16 @@ func Open(exe []byte, arg0 string) (uintptr, error) {
 	return uintptr(fd), nil
 }
 
+// Close closes the executable file descriptor.
 func Close(fd uintptr) error {
 	return unix.Close(int(fd))
+}
+
+// Path returns the path to the executable file descriptor. Running the
+// executable using the file descriptor path directly is an alternative to
+// running by file descriptor in Exec.
+func Path(fd uintptr) string {
+	return fmt.Sprintf("/proc/%d/fd/%d", os.Getpid(), int(fd))
 }
 
 // Exec runs the executable referenced by the file descriptor, replacing
