@@ -46,13 +46,15 @@ func init() {
 		errexit(128, err)
 	}
 
-	fd, err := strconv.Atoi(v)
+	i, err := strconv.Atoi(v)
 	if err != nil {
 		errexit(127, err)
 	}
 
+	fd := embedexe.FD(uintptr(i))
+
 	if os.Getenv(EnvFlags) == "CLOEXEC" {
-		if err := embedexe.SetCloseExec(uintptr(fd), true); err != nil {
+		if err := fd.SetCloseExec(true); err != nil {
 			errexit(128, err)
 		}
 
@@ -61,7 +63,7 @@ func init() {
 		}
 	}
 
-	err = embedexe.Exec(uintptr(fd), os.Args, os.Environ())
+	err = fd.Exec(os.Args, os.Environ())
 
 	errexit(126, err)
 }
@@ -91,7 +93,7 @@ func (cmd *Cmd) Run() error {
 	if err != nil {
 		return err
 	}
-	defer embedexe.Close(fd)
+	defer fd.Close()
 	return cmd.Cmd.Run()
 }
 
@@ -101,7 +103,7 @@ func (cmd *Cmd) Start() error {
 	if err != nil {
 		return err
 	}
-	defer embedexe.Close(fd)
+	defer fd.Close()
 	return cmd.Cmd.Start()
 }
 
@@ -112,7 +114,7 @@ func (cmd *Cmd) CombinedOutput() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer embedexe.Close(fd)
+	defer fd.Close()
 	return cmd.Cmd.CombinedOutput()
 }
 
@@ -122,11 +124,11 @@ func (cmd *Cmd) Output() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer embedexe.Close(fd)
+	defer fd.Close()
 	return cmd.Cmd.Output()
 }
 
-func (cmd *Cmd) fdopen() (uintptr, error) {
+func (cmd *Cmd) fdopen() (embedexe.FD, error) {
 	if cmd.Name == "" {
 		cmd.Args[0] = os.Args[0]
 	} else {
@@ -140,7 +142,7 @@ func (cmd *Cmd) fdopen() (uintptr, error) {
 
 	environ, err := fdset(fd)
 	if err != nil {
-		_ = embedexe.Close(fd)
+		_ = fd.Close()
 		return 0, err
 	}
 
@@ -149,11 +151,11 @@ func (cmd *Cmd) fdopen() (uintptr, error) {
 	return fd, nil
 }
 
-func fdset(fd uintptr) ([]string, error) {
+func fdset(fd embedexe.FD) ([]string, error) {
 	env := make([]string, 0)
-	if embedexe.CloseExec(fd) {
+	if fd.CloseExec() {
 		env = append(env, EnvFlags+"=CLOEXEC")
-		if err := embedexe.SetCloseExec(fd, false); err != nil {
+		if err := fd.SetCloseExec(false); err != nil {
 			return env, err
 		}
 	}
