@@ -6,15 +6,9 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"strconv"
 
 	"codeberg.org/msantos/embedexe"
-)
-
-const (
-	EnvVar     = "EMBEDEXE"
-	EnvFlags   = "EMBEDEXE_FLAGS"
-	EnvVerbose = "EMBEDEXE_VERBOSE" // enable debug error messages
+	"codeberg.org/msantos/embedexe/internal/reexec"
 )
 
 // Cmd is a wrapper around the os/exec Cmd struct.
@@ -27,45 +21,6 @@ type Cmd struct {
 	// The command name (proctitle) stored in /proc/self/comm.
 	// Defaults to the command name of the current running process.
 	Name string
-}
-
-func errexit(status int, err error) {
-	if os.Getenv(EnvVerbose) != "" {
-		fmt.Fprintf(os.Stderr, "%s: %v\n", os.Args[0], err)
-	}
-	os.Exit(status)
-}
-
-func init() {
-	v := os.Getenv(EnvVar)
-	if v == "" {
-		return
-	}
-
-	if err := os.Unsetenv(EnvVar); err != nil {
-		errexit(128, err)
-	}
-
-	i, err := strconv.Atoi(v)
-	if err != nil {
-		errexit(127, err)
-	}
-
-	fd := embedexe.FD(uintptr(i))
-
-	if os.Getenv(EnvFlags) == "CLOEXEC" {
-		if err := fd.SetCloseExec(true); err != nil {
-			errexit(128, err)
-		}
-
-		if err := os.Unsetenv(EnvFlags); err != nil {
-			errexit(128, err)
-		}
-	}
-
-	err = fd.Exec(os.Args, os.Environ())
-
-	errexit(126, err)
 }
 
 // Command returns the Cmd struct to execute the program held in exe
@@ -154,10 +109,10 @@ func (cmd *Cmd) fdopen() (embedexe.FD, error) {
 func fdset(fd embedexe.FD) ([]string, error) {
 	env := make([]string, 0)
 	if fd.CloseExec() {
-		env = append(env, EnvFlags+"=CLOEXEC")
+		env = append(env, reexec.EnvFlags+"="+reexec.CLOEXEC)
 		if err := fd.SetCloseExec(false); err != nil {
 			return env, err
 		}
 	}
-	return append(env, fmt.Sprintf("%s=%d", EnvVar, int(fd))), nil
+	return append(env, fmt.Sprintf("%s=%d", reexec.EnvVar, int(fd))), nil
 }

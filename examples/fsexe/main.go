@@ -28,7 +28,7 @@ func main() {
 	flag.Parse()
 
 	if *verbose {
-		if err := os.Setenv(exec.EnvVerbose, "1"); err != nil {
+		if err := os.Setenv("EMBEDEXE_VERBOSE", "1"); err != nil {
 			log.Fatalln(err)
 		}
 	}
