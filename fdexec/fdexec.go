@@ -15,12 +15,12 @@ import (
 type Cmd struct {
 	*exec.Cmd
 
-	fd embedexe.FD // the executable file descriptor
+	fd *embedexe.FD // the executable file descriptor
 }
 
 // Command returns the Cmd struct to execute the program referenced by
 // the file descriptor with the given arguments.
-func Command(fd embedexe.FD, arg ...string) *Cmd {
+func Command(fd *embedexe.FD, arg ...string) *Cmd {
 	cmd := exec.Command("/proc/self/exe", arg...)
 	return &Cmd{
 		Cmd: cmd,
@@ -29,7 +29,7 @@ func Command(fd embedexe.FD, arg ...string) *Cmd {
 }
 
 // CommandContext returns a Cmd struct using the provided context.
-func CommandContext(ctx context.Context, fd embedexe.FD, arg ...string) *Cmd {
+func CommandContext(ctx context.Context, fd *embedexe.FD, arg ...string) *Cmd {
 	cmd := exec.CommandContext(ctx, "/proc/self/exe", arg...)
 	return &Cmd{
 		Cmd: cmd,
@@ -38,7 +38,7 @@ func CommandContext(ctx context.Context, fd embedexe.FD, arg ...string) *Cmd {
 }
 
 // FD returns the memory file descriptor for the executable.
-func (cmd *Cmd) FD() embedexe.FD {
+func (cmd *Cmd) FD() *embedexe.FD {
 	return cmd.fd
 }
 
@@ -75,13 +75,13 @@ func (cmd *Cmd) Output() ([]byte, error) {
 	return cmd.Cmd.Output()
 }
 
-func Open(exe []byte) (embedexe.FD, error) {
+func Open(exe []byte) (*embedexe.FD, error) {
 	return embedexe.Open(exe, os.Args[0])
 }
 
 func (cmd *Cmd) fdsetenv() error {
 	env := make([]string, 0)
-	env = append(env, fmt.Sprintf("%s=%d", reexec.EnvVar, int(cmd.fd)))
+	env = append(env, fmt.Sprintf("%s=%d", reexec.EnvVar, int(cmd.fd.FD())))
 
 	if cmd.FD().CloseExec() {
 		env = append(env, reexec.EnvFlags+"="+reexec.CLOEXEC)

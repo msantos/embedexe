@@ -83,7 +83,7 @@ func (cmd *Cmd) Output() ([]byte, error) {
 	return cmd.Cmd.Output()
 }
 
-func (cmd *Cmd) fdopen() (embedexe.FD, error) {
+func (cmd *Cmd) fdopen() (*embedexe.FD, error) {
 	if cmd.Name == "" {
 		cmd.Args[0] = os.Args[0]
 	} else {
@@ -92,13 +92,13 @@ func (cmd *Cmd) fdopen() (embedexe.FD, error) {
 
 	fd, err := embedexe.Open(cmd.Exe, cmd.Args[0])
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 
 	environ, err := fdset(fd)
 	if err != nil {
 		_ = fd.Close()
-		return 0, err
+		return nil, err
 	}
 
 	cmd.Env = append(cmd.Env, environ...)
@@ -106,7 +106,7 @@ func (cmd *Cmd) fdopen() (embedexe.FD, error) {
 	return fd, nil
 }
 
-func fdset(fd embedexe.FD) ([]string, error) {
+func fdset(fd *embedexe.FD) ([]string, error) {
 	env := make([]string, 0)
 	if fd.CloseExec() {
 		env = append(env, reexec.EnvFlags+"="+reexec.CLOEXEC)
@@ -114,5 +114,5 @@ func fdset(fd embedexe.FD) ([]string, error) {
 			return env, err
 		}
 	}
-	return append(env, fmt.Sprintf("%s=%d", reexec.EnvVar, int(fd))), nil
+	return append(env, fmt.Sprintf("%s=%d", reexec.EnvVar, int(fd.FD()))), nil
 }

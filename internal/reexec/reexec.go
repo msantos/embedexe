@@ -39,7 +39,7 @@ func init() {
 		errexit(127, err)
 	}
 
-	fd := embedexe.FD(uintptr(i))
+	fd := embedexe.FromInt(i)
 
 	if os.Getenv(EnvFlags) == CLOEXEC {
 		if err := fd.SetCloseExec(true); err != nil {
