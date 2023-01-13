@@ -21,6 +21,9 @@ type Cmd struct {
 	// The command name (proctitle) stored in /proc/self/comm.
 	// Defaults to the command name of the current running process.
 	Name string
+
+	// Enable debug messages to stderr.
+	Verbose bool
 }
 
 // Command returns the Cmd struct to execute the program held in exe
@@ -95,7 +98,7 @@ func (cmd *Cmd) fdopen() (*embedexe.FD, error) {
 		return nil, err
 	}
 
-	environ, err := fdset(fd)
+	environ, err := cmd.fdset(fd)
 	if err != nil {
 		_ = fd.Close()
 		return nil, err
@@ -106,13 +109,16 @@ func (cmd *Cmd) fdopen() (*embedexe.FD, error) {
 	return fd, nil
 }
 
-func fdset(fd *embedexe.FD) ([]string, error) {
+func (cmd *Cmd) fdset(fd *embedexe.FD) ([]string, error) {
 	env := make([]string, 0)
 	if fd.CloseExec() {
 		env = append(env, reexec.EnvFlags+"="+reexec.CLOEXEC)
 		if err := fd.SetCloseExec(false); err != nil {
 			return env, err
 		}
+	}
+	if cmd.Verbose {
+		env = append(env, reexec.EnvVerbose+"=1")
 	}
 	return append(env, fmt.Sprintf("%s=%d", reexec.EnvVar, int(fd.FD()))), nil
 }

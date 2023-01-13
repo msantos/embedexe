@@ -15,6 +15,8 @@ import (
 type Cmd struct {
 	*exec.Cmd
 
+	Verbose bool // enable debug messages to stderr
+
 	fd *embedexe.FD // the executable file descriptor
 }
 
@@ -88,6 +90,10 @@ func (cmd *Cmd) fdsetenv() error {
 		if err := cmd.FD().SetCloseExec(false); err != nil {
 			return err
 		}
+	}
+
+	if cmd.Verbose {
+		env = append(env, reexec.EnvVerbose+"=1")
 	}
 
 	cmd.Env = append(cmd.Env, env...)

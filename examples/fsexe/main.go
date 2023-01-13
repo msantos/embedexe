@@ -27,12 +27,6 @@ func main() {
 	verbose := flag.Bool("verbose", false, "Enable debug messages")
 	flag.Parse()
 
-	if *verbose {
-		if err := os.Setenv("EMBEDEXE_VERBOSE", "1"); err != nil {
-			log.Fatalln(err)
-		}
-	}
-
 	if flag.NArg() == 0 {
 		flag.Usage()
 		os.Exit(2)
@@ -49,6 +43,7 @@ func main() {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Env = os.Environ()
+	cmd.Verbose = *verbose
 
 	if err := cmd.Run(); err != nil {
 		log.Fatalln(err)
