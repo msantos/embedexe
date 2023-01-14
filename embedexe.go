@@ -33,6 +33,9 @@ func write(fd int, p []byte) error {
 
 // FromInt converts a raw file descriptor into an FD.
 func FromInt(fd int) *FD {
+	if fd < 0 {
+		return nil
+	}
 	return &FD{
 		fd:   uintptr(fd),
 		path: fmt.Sprintf("/proc/%d/fd/%d", os.Getpid(), fd),
