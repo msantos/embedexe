@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path"
 
 	"codeberg.org/msantos/embedexe"
 	"codeberg.org/msantos/embedexe/internal/reexec"
@@ -78,7 +79,7 @@ func (cmd *Cmd) Output() ([]byte, error) {
 }
 
 func Open(exe []byte) (*embedexe.FD, error) {
-	return embedexe.Open(exe, os.Args[0])
+	return embedexe.Open(exe, path.Base(os.Args[0]))
 }
 
 func (cmd *Cmd) fdsetenv() error {

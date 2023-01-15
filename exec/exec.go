@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path"
 
 	"codeberg.org/msantos/embedexe"
 	"codeberg.org/msantos/embedexe/internal/reexec"
@@ -88,7 +89,7 @@ func (cmd *Cmd) Output() ([]byte, error) {
 
 func (cmd *Cmd) fdopen() (*embedexe.FD, error) {
 	if cmd.Name == "" {
-		cmd.Args[0] = os.Args[0]
+		cmd.Args[0] = path.Base(os.Args[0])
 	} else {
 		cmd.Args[0] = cmd.Name
 	}
