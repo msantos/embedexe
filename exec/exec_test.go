@@ -17,9 +17,9 @@ func TestCommand(t *testing.T) {
 
 	stdout := bytes.Buffer{}
 	cmd := exec.Command(exe, "test")
-	cmd.Env = append(os.Environ(), "EMBEDEXE_VERBOSE=1")
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stdout
+	cmd.Verbose = true
 
 	if err := cmd.Run(); err != nil {
 		t.Errorf("%v", err)

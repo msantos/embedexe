@@ -21,7 +21,7 @@ func TestCommand(t *testing.T) {
 	}
 
 	cmd := fdexec.Command(fd, "test")
-	cmd.Env = append(os.Environ(), "EMBEDEXE_VERBOSE=1")
+	cmd.Verbose = true
 
 	out, err := cmd.CombinedOutput()
 	if err != nil {
