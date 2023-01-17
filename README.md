@@ -20,6 +20,12 @@ of executables embedded in a Go binary.
 
 # EXAMPLES
 
+* embedexe: [Using a file descriptor path](https://pkg.go.dev/codeberg.org/msantos/embedexe#example-FD.Path)
+
+* embedexe/fdexec: [Using a file descriptor](https://pkg.go.dev/codeberg.org/msantos/embedexe/fdexec#example-Command)
+
+* embedexe/exec: [Using a byte array](https://pkg.go.dev/codeberg.org/msantos/embedexe/exec#example-Command)
+
 * [fsexe](examples/fsexe/main.go): embed a directory of executables
   in a Go binary and run from memory
 
