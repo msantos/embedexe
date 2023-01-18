@@ -57,13 +57,13 @@ func ExampleOpen() {
 	fd, err := embedexe.Open(b, "example")
 	if err != nil {
 		fmt.Println(err)
-		os.Exit(1)
+		return
 	}
 	defer fd.Close()
 
 	if err := fd.Exec([]string{"example", "test"}, os.Environ()); err != nil {
 		fmt.Println(err)
-		os.Exit(1)
+		return
 	}
 }
 
@@ -71,13 +71,13 @@ func ExampleFD_Path() {
 	b, err := os.ReadFile("/bin/echo")
 	if err != nil {
 		fmt.Println(err)
-		os.Exit(1)
+		return
 	}
 
 	fd, err := embedexe.Open(b, "echo")
 	if err != nil {
 		fmt.Println(err)
-		os.Exit(1)
+		return
 	}
 
 	cmd := exec.Command(fd.Path(), "-n", "test", "abc")
@@ -86,7 +86,30 @@ func ExampleFD_Path() {
 
 	if err := cmd.Run(); err != nil {
 		fmt.Println(err)
-		os.Exit(1)
+		return
+	}
+
+	// Output: test abc
+}
+
+// ExampleFD_Path_sh is an example of running a script contained in a
+// memfd without execute permissions.
+func ExampleFD_Path_sh() {
+	b := []byte("#!/bin/sh\necho $@")
+
+	fd, err := embedexe.Open(b, "sh")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	cmd := exec.Command("/bin/sh", fd.Path(), "-n", "test", "abc")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	if err := cmd.Run(); err != nil {
+		fmt.Println(err)
+		return
 	}
 
 	// Output: test abc
