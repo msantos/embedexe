@@ -92,8 +92,8 @@ func ExampleFD_Path() {
 	// Output: test abc
 }
 
-// ExampleFD_Path_sh is an example of running a script contained in a
-// memfd without execute permissions.
+// An example of running a script contained in a memfd without execute
+// permissions.
 func ExampleFD_Path_sh() {
 	b := []byte("#!/bin/sh\necho $@")
 

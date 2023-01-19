@@ -1,7 +1,6 @@
 package exec_test
 
 import (
-	"bytes"
 	"os"
 	"testing"
 
@@ -15,19 +14,17 @@ func TestCommand(t *testing.T) {
 		return
 	}
 
-	stdout := bytes.Buffer{}
 	cmd := exec.Command(exe, "test")
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stdout
 	cmd.Verbose = true
 
-	if err := cmd.Run(); err != nil {
+	out, err := cmd.CombinedOutput()
+	if err != nil {
 		t.Errorf("%v", err)
 		return
 	}
 
-	if stdout.String() != "test\n" {
-		t.Errorf("expected: test, got: %v", stdout.String())
+	if string(out) != "test\n" {
+		t.Errorf("expected: test, got: %v", out)
 		return
 	}
 }
