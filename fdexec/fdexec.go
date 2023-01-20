@@ -86,9 +86,9 @@ func (cmd *Cmd) fdsetenv() error {
 	env := make([]string, 0)
 	env = append(env, fmt.Sprintf("%s=%d", reexec.EnvVar, int(cmd.fd.FD())))
 
-	if cmd.FD().CloseExec() {
+	if cmd.fd.CloseExec() {
 		env = append(env, reexec.EnvFlags+"="+reexec.CLOEXEC)
-		if err := cmd.FD().SetCloseExec(false); err != nil {
+		if err := cmd.fd.SetCloseExec(false); err != nil {
 			return err
 		}
 	}
