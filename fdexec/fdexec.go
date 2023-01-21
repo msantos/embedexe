@@ -16,7 +16,12 @@ import (
 type Cmd struct {
 	*exec.Cmd
 
-	Verbose bool // enable debug messages to stderr
+	// The command name (proctitle) stored in /proc/self/cmdline.
+	// Defaults to the command name of the current running process.
+	Name string
+
+	// Enable debug messages to stderr.
+	Verbose bool
 
 	fd *embedexe.FD // the executable file descriptor
 }
@@ -98,6 +103,12 @@ func (cmd *Cmd) fdsetenv() error {
 	}
 
 	cmd.Env = append(cmd.Env, env...)
+
+	if cmd.Name == "" {
+		cmd.Args[0] = path.Base(os.Args[0])
+	} else {
+		cmd.Args[0] = cmd.Name
+	}
 
 	return nil
 }

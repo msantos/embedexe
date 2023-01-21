@@ -19,7 +19,7 @@ type Cmd struct {
 	// Exe holds the executable as a byte array.
 	Exe []byte
 
-	// The command name (proctitle) stored in /proc/self/comm.
+	// The command name (proctitle) stored in /proc/self/cmdline.
 	// Defaults to the command name of the current running process.
 	Name string
 
