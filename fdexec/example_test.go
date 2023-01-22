@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	"codeberg.org/msantos/embedexe"
 	"codeberg.org/msantos/embedexe/fdexec"
 )
 
@@ -13,7 +14,7 @@ func ExampleCommand() {
 		log.Fatalln(err)
 	}
 
-	fd, err := fdexec.Open(exe)
+	fd, err := embedexe.Open(exe, "echo")
 	if err != nil {
 		log.Fatalln(err)
 	}

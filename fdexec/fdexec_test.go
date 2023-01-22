@@ -4,6 +4,7 @@ import (
 	"os"
 	"testing"
 
+	"codeberg.org/msantos/embedexe"
 	"codeberg.org/msantos/embedexe/fdexec"
 )
 
@@ -14,7 +15,7 @@ func TestCommand(t *testing.T) {
 		return
 	}
 
-	fd, err := fdexec.Open(exe)
+	fd, err := embedexe.Open(exe, "echo")
 	if err != nil {
 		t.Errorf("%v", err)
 		return
@@ -42,7 +43,7 @@ func TestCommandNullArgv(t *testing.T) {
 		return
 	}
 
-	fd, err := fdexec.Open(exe)
+	fd, err := embedexe.Open(exe, "echo")
 	if err != nil {
 		t.Errorf("%v", err)
 		return

@@ -45,11 +45,6 @@ func CommandContext(ctx context.Context, fd *embedexe.FD, arg ...string) *Cmd {
 	}
 }
 
-// FD returns the memory file descriptor for the executable.
-func (cmd *Cmd) FD() *embedexe.FD {
-	return cmd.fd
-}
-
 // Run starts the specified command and waits for it to complete.
 func (cmd *Cmd) Run() error {
 	if err := cmd.fdsetenv(); err != nil {
@@ -81,10 +76,6 @@ func (cmd *Cmd) Output() ([]byte, error) {
 		return nil, err
 	}
 	return cmd.Cmd.Output()
-}
-
-func Open(exe []byte) (*embedexe.FD, error) {
-	return embedexe.Open(exe, path.Base(os.Args[0]))
 }
 
 func (cmd *Cmd) fdsetenv() error {
