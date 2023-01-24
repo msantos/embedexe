@@ -1,6 +1,6 @@
 # embedexe
 
-[![Go Reference](https://pkg.go.dev/badge/codeberg.org/msantos/execve.svg)](https://pkg.go.dev/codeberg.org/msantos/embedexe)
+[![Go Reference](https://pkg.go.dev/badge/codeberg.org/msantos/embedexe.svg)](https://pkg.go.dev/codeberg.org/msantos/embedexe)
 
 Run a program stored in a byte array such as an executable or a directory
 of executables embedded in a Go binary.
@@ -10,8 +10,8 @@ of executables embedded in a Go binary.
 * the executable must either be statically linked or the linked libraries
   available on the filesystem
 
-* only works on Linux (but not on ChromeOS/crostini where presumably
-  kernel hardening measures disable executing memfds)
+* only works on Linux (but not on ChromeOS/crostini where the W^X policies
+  disable executing memfds)
 
 * an embedded executable cannot run another executable embedded in the
   same binary
