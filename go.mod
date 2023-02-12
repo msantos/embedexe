@@ -3,6 +3,6 @@ module codeberg.org/msantos/embedexe
 go 1.19
 
 require (
-	codeberg.org/msantos/execve v0.0.0-20221124114355-221580a35669
-	golang.org/x/sys v0.2.0
+	codeberg.org/msantos/execve v0.0.0-20230206112018-e5c3a7f4d436
+	golang.org/x/sys v0.5.0
 )
