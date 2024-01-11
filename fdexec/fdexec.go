@@ -79,8 +79,7 @@ func (cmd *Cmd) Output() ([]byte, error) {
 }
 
 func (cmd *Cmd) fdsetenv() error {
-	env := make([]string, 0)
-	env = append(env, fmt.Sprintf("%s=%d", reexec.EnvVar, int(cmd.fd.FD())))
+	env := []string{fmt.Sprintf("%s=%d", reexec.EnvVar, int(cmd.fd.FD()))}
 
 	if cmd.fd.CloseExec() {
 		env = append(env, reexec.EnvFlags+"="+reexec.CLOEXEC)
