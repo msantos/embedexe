@@ -111,7 +111,7 @@ func (cmd *Cmd) fdopen() (*embedexe.FD, error) {
 }
 
 func (cmd *Cmd) fdset(fd *embedexe.FD) ([]string, error) {
-	env := make([]string, 0)
+	env := []string{fmt.Sprintf("%s=%d", reexec.EnvVar, int(fd.FD()))}
 	if fd.CloseExec() {
 		env = append(env, reexec.EnvFlags+"="+reexec.CLOEXEC)
 		if err := fd.SetCloseExec(false); err != nil {
@@ -119,7 +119,7 @@ func (cmd *Cmd) fdset(fd *embedexe.FD) ([]string, error) {
 		}
 	}
 	if cmd.Verbose {
-		env = append(env, reexec.EnvVerbose+"=1")
+		return append(env, reexec.EnvVerbose+"=1"), nil
 	}
-	return append(env, fmt.Sprintf("%s=%d", reexec.EnvVar, int(fd.FD()))), nil
+	return env, nil
 }
