@@ -25,6 +25,9 @@ type Cmd struct {
 
 	// Enable debug messages to stderr.
 	Verbose bool
+
+	// Executable file descriptor.
+	fd *embedexe.FD
 }
 
 // Command returns the Cmd struct to execute the program held in exe
@@ -62,8 +65,20 @@ func (cmd *Cmd) Start() error {
 	if err != nil {
 		return err
 	}
-	defer fd.Close()
+	cmd.fd = fd
 	return cmd.Cmd.Start()
+}
+
+// Wait waits for the command to exit and waits for any copying to stdin or copying from stdout or stderr to complete.
+//
+// The command must have been started by Start.
+func (cmd *Cmd) Wait() error {
+	defer func() {
+		if cmd.fd != nil {
+			cmd.fd.Close()
+		}
+	}()
+	return cmd.Cmd.Wait()
 }
 
 // CombinedOutput runs the command and returns its combined standard
