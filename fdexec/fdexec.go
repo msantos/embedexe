@@ -92,7 +92,7 @@ func (cmd *Cmd) fdsetenv() error {
 		env = append(env, reexec.EnvVerbose+"=1")
 	}
 
-	cmd.Env = append(cmd.Env, env...)
+	cmd.Env = append(reexec.Env(cmd.Env), env...)
 
 	if cmd.Name == "" {
 		cmd.Args[0] = path.Base(os.Args[0])

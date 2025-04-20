@@ -120,7 +120,7 @@ func (cmd *Cmd) fdopen() (*embedexe.FD, error) {
 		return nil, err
 	}
 
-	cmd.Env = append(cmd.Env, environ...)
+	cmd.Env = append(reexec.Env(cmd.Env), environ...)
 
 	return fd, nil
 }

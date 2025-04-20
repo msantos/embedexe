@@ -4,7 +4,9 @@ package reexec
 import (
 	"fmt"
 	"os"
+	"slices"
 	"strconv"
+	"strings"
 
 	"codeberg.org/msantos/embedexe"
 )
@@ -16,6 +18,12 @@ const (
 
 	CLOEXEC = "CLOEXEC"
 )
+
+func Env(env []string) []string {
+	return slices.DeleteFunc(env, func(s string) bool {
+		return strings.HasPrefix(s, EnvVar)
+	})
+}
 
 func errexit(status int, err error) {
 	if os.Getenv(EnvVerbose) != "" {
