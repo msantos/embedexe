@@ -1,4 +1,4 @@
-codeberg.org/msantos/execve v0.0.0-20230206112018-e5c3a7f4d436 h1:JfctQYg/vUC3LpnjGeNTDI/JSenwfeshld2kUjjR2+0=
-codeberg.org/msantos/execve v0.0.0-20230206112018-e5c3a7f4d436/go.mod h1:mvAmIdjLHiBlHQXtcPhQycOi0QuCAbw8dxOXxk0gYaE=
-golang.org/x/sys v0.16.0 h1:xWw16ngr6ZMtmxDyKyIgsE93KNKz5HKmMa3b8ALHidU=
-golang.org/x/sys v0.16.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
+codeberg.org/msantos/execve v0.0.0-20260304121057-b54800594909 h1:DHEL9imuBsem608GZHq3aEl26w+8wV8z/5sic4U/EQU=
+codeberg.org/msantos/execve v0.0.0-20260304121057-b54800594909/go.mod h1:anSar/XoY88y7ikIgjmWcFmO/sGJ0lEQ141ERPl+8uo=
+golang.org/x/sys v0.41.0 h1:Ivj+2Cp/ylzLiEU89QhWblYnOE9zerudt9Ftecq2C6k=
+golang.org/x/sys v0.41.0/go.mod h1:OgkHotnGiDImocRcuBABYBEXf8A9a87e/uXjp9XT3ks=

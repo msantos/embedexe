@@ -1,8 +1,8 @@
 module codeberg.org/msantos/embedexe
 
-go 1.19
+go 1.24.0
 
 require (
-	codeberg.org/msantos/execve v0.0.0-20230206112018-e5c3a7f4d436
-	golang.org/x/sys v0.16.0
+	codeberg.org/msantos/execve v0.0.0-20260304121057-b54800594909
+	golang.org/x/sys v0.41.0
 )
